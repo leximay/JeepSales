@@ -42,17 +42,25 @@ class FetchJeepTest extends FetchJeepTestSupport {
   private TestRestTemplate restTemplate;
   @LocalServerPort 
   private int severPort;
+  @SuppressWarnings("unchecked")
   @Test
   void testThatJeepsAreReturnedWhenAValidModelAndTrimAreSupplied() {
-    String uri = String.format("%s?model=%s&trim=%s");
+    JeepModel model = JeepModel.WRANGLER;
+    String trim = "Sport";
+    String uri = 
+        String.format("%s?model=%s&trim=%s", getBaseUri(), model, trim);
+   
     ResponseEntity<Jeep> response = restTemplate.exchange
         (uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
     
     
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-  
+    
+    List<Jeep> actual = (List<Jeep>) response.getBody();
     List<Jeep> expected = buildExpected();
-    assertThat(response.getBody()).isEqualTo(expected);
+    
+    
+    assertThat(actual).isEqualTo(expected);
   }
 }
 
